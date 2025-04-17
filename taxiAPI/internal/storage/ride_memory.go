@@ -3,24 +3,29 @@ package storage
 import (
 	"awesomeProject/taxiAPI/internal/entity"
 	customErrors "awesomeProject/taxiAPI/internal/errors"
+	"strconv"
 	"sync"
 )
 
 type RideMemory struct {
-	mutex sync.RWMutex
-	rides map[string]*entity.Ride
+	mutex  sync.RWMutex
+	rides  map[string]*entity.Ride
+	nextID int
 }
 
 func NewRideMemory() *RideMemory {
 	return &RideMemory{
-		rides: make(map[string]*entity.Ride),
+		rides:  make(map[string]*entity.Ride),
+		nextID: 1,
 	}
 }
 
 func (store *RideMemory) SaveRide(ride *entity.Ride) error {
 	store.mutex.Lock()
 	defer store.mutex.Unlock()
+	ride.ID = strconv.Itoa(store.nextID)
 	store.rides[ride.ID] = ride
+	store.nextID++
 	return nil
 }
 func (store *RideMemory) FindRideByID(id string) (*entity.Ride, error) {
@@ -50,16 +55,6 @@ func (store *RideMemory) AssignDriverToRide(rideID string, driverID string) erro
 		return customErrors.ErrRideNotFound
 	}
 	ride.DriverID = driverID
-	return nil
-}
-func (store *RideMemory) DeleteRide(id string) error {
-	store.mutex.Lock()
-	defer store.mutex.Unlock()
-	_, ok := store.rides[id]
-	if !ok {
-		return customErrors.ErrRideNotFound
-	}
-	delete(store.rides, id)
 	return nil
 }
 func (store *RideMemory) GetAllRides() ([]*entity.Ride, error) {

@@ -3,7 +3,6 @@ package service
 import (
 	"awesomeProject/taxiAPI/internal/entity"
 	customErrors "awesomeProject/taxiAPI/internal/errors"
-	"github.com/google/uuid"
 )
 
 type RideStore interface {
@@ -11,7 +10,6 @@ type RideStore interface {
 	FindRideByID(id string) (*entity.Ride, error)
 	UpdateRideStatus(rideID string, status entity.Status) error
 	AssignDriverToRide(rideID string, driverID string) error
-	DeleteRide(id string) error
 	GetAllRides() ([]*entity.Ride, error)
 }
 type RideService struct {
@@ -24,7 +22,6 @@ func NewRideService(store RideStore) *RideService {
 	}
 }
 func (s *RideService) CreateRide(passengerID, origin, destination string) (*entity.Ride, error) {
-	id := uuid.New().String()
 	if passengerID == "" {
 		return nil, customErrors.ErrPassengerIDRequired
 	}
@@ -38,7 +35,6 @@ func (s *RideService) CreateRide(passengerID, origin, destination string) (*enti
 		PassengerID: passengerID,
 		Origin:      origin,
 		Destination: destination,
-		ID:          id,
 		Status:      entity.StatusPending,
 	}
 	err := s.store.SaveRide(ride)
@@ -66,13 +62,41 @@ func (s *RideService) UpdateRideStatus(rideID string, status entity.Status) erro
 	if rideID == "" {
 		return customErrors.ErrRideIDRequired
 	}
-
+	ride, err := s.store.FindRideByID(rideID)
+	if err != nil {
+		return err
+	}
+	if ride.Status == entity.StatusCompleted && status != entity.StatusCompleted {
+		return customErrors.ErrCannotChangeCompletedRide
+	}
+	if !status.IsValid() {
+		return customErrors.ErrInvalidRideStatus
+	}
+	ride.Status = status
+	return s.store.UpdateRideStatus(rideID, ride.Status)
 }
 
 func (s *RideService) AssignDriverToRide(rideID string, driverID string) error {
-
-}
-
-func (s *RideService) DeleteRide(rideID string) error {
-
+	if rideID == "" {
+		return customErrors.ErrRideIDRequired
+	}
+	if driverID == "" {
+		return customErrors.ErrDriverIDRequired
+	}
+	ride, err := s.store.FindRideByID(rideID)
+	if err != nil {
+		return err
+	}
+	if ride.DriverID != "" {
+		if ride.DriverID == driverID {
+			return customErrors.ErrDriverAlreadyAssignedToRide
+		}
+		return customErrors.ErrRideAlreadyAssigned
+	}
+	if ride.Status != entity.StatusPending {
+		return customErrors.ErrCannotAssignDriverToNonPendingRide
+	}
+	ride.DriverID = driverID
+	ride.Status = entity.StatusAccepted
+	return s.store.AssignDriverToRide(rideID, driverID)
 }
