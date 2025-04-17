@@ -7,9 +7,9 @@ A simple backend service for creating and managing taxi rides — built in Go us
 ### ✅ Features Implemented
 
 - Create a new ride → `POST /rides`
-- Get ride by ID → `GET /rides/{id}`
+- Get ride by ID → `GET /rides/{ride_id}`
 - Get all rides → `GET /rides`
-- Assign a driver to a ride → `PUT /rides/{id}/driver`
+- Assign a driver to a ride → `PUT /rides/{ride_id}/driver`
 - Automatic status update: `pending` → `accepted`
 - In-memory storage with auto-incrementing ride IDs
 
@@ -47,7 +47,7 @@ Body (JSON):
 **GET** `/rides`
 
 #### 🔍 Get ride by ID  
-**GET** `/rides/{ride_id}}`  
+**GET** `/rides/{ride_id}`  
 Example: `/rides/1`
 
 #### 👨‍✈️ Assign a driver to a ride  
