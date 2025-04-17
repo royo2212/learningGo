@@ -16,3 +16,11 @@ const (
 	StatusCompleted Status = "completed"
 	StatusCancelled Status = "cancelled"
 )
+
+func (s Status) IsValid() bool {
+	switch s {
+	case StatusPending, StatusAccepted, StatusCompleted, StatusCancelled:
+		return true
+	}
+	return false
+}
