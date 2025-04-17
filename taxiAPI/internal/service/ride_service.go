@@ -1,8 +1,8 @@
 package service
 
 import (
-	"awesomeProject/taxiAPI/internal/entity"
-	customErrors "awesomeProject/taxiAPI/internal/errors"
+	"taxiAPI/internal/entity"
+	customErrors "taxiAPI/internal/errors"
 )
 
 type RideStore interface {

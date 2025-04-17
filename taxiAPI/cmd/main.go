@@ -1,14 +1,12 @@
 package main
 
 import (
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-
-	"github.com/gorilla/mux"
-
-	"awesomeProject/taxiAPI/internal/endpoints"
-	"awesomeProject/taxiAPI/internal/service"
-	"awesomeProject/taxiAPI/internal/storage"
+	"taxiAPI/internal/endpoints"
+	"taxiAPI/internal/service"
+	"taxiAPI/internal/storage"
 )
 
 func main() {

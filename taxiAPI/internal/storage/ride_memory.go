@@ -1,10 +1,10 @@
 package storage
 
 import (
-	"awesomeProject/taxiAPI/internal/entity"
-	customErrors "awesomeProject/taxiAPI/internal/errors"
 	"strconv"
 	"sync"
+	"taxiAPI/internal/entity"
+	customErrors "taxiAPI/internal/errors"
 )
 
 type RideMemory struct {

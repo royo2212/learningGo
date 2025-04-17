@@ -1,11 +1,11 @@
 package endpoints
 
 import (
-	customErrors "awesomeProject/taxiAPI/internal/errors"
-	"awesomeProject/taxiAPI/internal/service"
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
+	customErrors "taxiAPI/internal/errors"
+	"taxiAPI/internal/service"
 )
 
 type RideHandler struct {
